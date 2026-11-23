@@ -1,0 +1,80 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/map.gd" id="1_map"]
+[ext_resource type="Theme" path="res://themes/ui_theme.tres" id="99_theme"]
+
+[node name="Map" type="Control"]
+theme = ExtResource("99_theme")
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_map")
+
+[node name="InfoLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.25
+anchor_right = 0.75
+offset_top = 16.0
+offset_bottom = 44.0
+grow_horizontal = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Old Quarter"
+
+[node name="LegendLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -44.0
+offset_right = 400.0
+offset_bottom = -16.0
+grow_vertical = 0
+text = "Arrow: you   Diamond: mission   Block: building"
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -64.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 64.0
+grow_horizontal = 0
+text = "X"
+
+[node name="ZoomInButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -164.0
+offset_right = -16.0
+offset_bottom = -116.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "+"
+
+[node name="ZoomOutButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -112.0
+offset_right = -16.0
+offset_bottom = -64.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "-"

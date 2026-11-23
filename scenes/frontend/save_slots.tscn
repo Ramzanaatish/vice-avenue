@@ -1,0 +1,204 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/save_slots.gd" id="1_slots"]
+[ext_resource type="Theme" path="res://themes/ui_theme.tres" id="99_theme"]
+
+[node name="SaveSlots" type="Control"]
+theme = ExtResource("99_theme")
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_slots")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.05, 0.08, 1)
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 16.0
+offset_right = 300.0
+offset_bottom = 64.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "Save Slots"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slots" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 100.0
+offset_right = -24.0
+offset_bottom = -120.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="SlotCard0" type="PanelContainer" parent="Slots"]
+custom_minimum_size = Vector2(300, 240)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Slots/SlotCard0"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="SlotName" type="Label" parent="Slots/SlotCard0/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Autosave"
+
+[node name="SlotInfo" type="Label" parent="Slots/SlotCard0/VBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 3
+text = "Empty"
+autowrap_mode = 2
+
+[node name="LoadButton" type="Button" parent="Slots/SlotCard0/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Load"
+
+[node name="DeleteButton" type="Button" parent="Slots/SlotCard0/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Delete"
+
+[node name="SlotCard1" type="PanelContainer" parent="Slots"]
+custom_minimum_size = Vector2(300, 240)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Slots/SlotCard1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="SlotName" type="Label" parent="Slots/SlotCard1/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Slot 1"
+
+[node name="SlotInfo" type="Label" parent="Slots/SlotCard1/VBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 3
+text = "Empty"
+autowrap_mode = 2
+
+[node name="LoadButton" type="Button" parent="Slots/SlotCard1/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "New Game"
+
+[node name="DeleteButton" type="Button" parent="Slots/SlotCard1/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Delete"
+
+[node name="SlotCard2" type="PanelContainer" parent="Slots"]
+custom_minimum_size = Vector2(300, 240)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Slots/SlotCard2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="SlotName" type="Label" parent="Slots/SlotCard2/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Slot 2"
+
+[node name="SlotInfo" type="Label" parent="Slots/SlotCard2/VBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 3
+text = "Empty"
+autowrap_mode = 2
+
+[node name="LoadButton" type="Button" parent="Slots/SlotCard2/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "New Game"
+
+[node name="DeleteButton" type="Button" parent="Slots/SlotCard2/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Delete"
+
+[node name="StatusLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -108.0
+offset_right = 400.0
+offset_bottom = -76.0
+grow_horizontal = 2
+grow_vertical = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -64.0
+offset_right = 100.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Back"
+
+[node name="DeleteConfirm" type="ConfirmationDialog" parent="."]
+title = "Delete save"
+dialog_text = "Delete this save? This cannot be undone."

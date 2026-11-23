@@ -1,0 +1,61 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/game_over.gd" id="1_over"]
+[ext_resource type="Theme" path="res://themes/ui_theme.tres" id="99_theme"]
+
+[node name="GameOver" type="CanvasLayer"]
+script = ExtResource("1_over")
+
+[node name="Overlay" type="ColorRect" parent="."]
+theme = ExtResource("99_theme")
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.25, 0.02, 0.02, 0.85)
+
+[node name="VBox" type="VBoxContainer" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -160.0
+offset_right = 200.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="HeaderLabel" type="Label" parent="Overlay/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "DOWN AND OUT"
+horizontal_alignment = 1
+
+[node name="CauseLabel" type="Label" parent="Overlay/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Killed in the streets."
+horizontal_alignment = 1
+
+[node name="AutosaveLabel" type="Label" parent="Overlay/VBox"]
+layout_mode = 2
+text = "Last autosave: —"
+horizontal_alignment = 1
+
+[node name="RetryButton" type="Button" parent="Overlay/VBox"]
+layout_mode = 2
+text = "Retry Checkpoint"
+
+[node name="LoadButton" type="Button" parent="Overlay/VBox"]
+layout_mode = 2
+text = "Load Save"
+
+[node name="QuitButton" type="Button" parent="Overlay/VBox"]
+layout_mode = 2
+text = "Quit to Main Menu"

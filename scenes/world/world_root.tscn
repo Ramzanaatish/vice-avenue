@@ -1,0 +1,332 @@
+[gd_scene load_steps=34 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/world_root.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/frontend/hud.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://scenes/frontend/pause_menu.tscn" id="4_pause"]
+[ext_resource type="PackedScene" path="res://scenes/vehicles/car.tscn" id="5_car"]
+[ext_resource type="Script" path="res://scripts/world/vehicle_manager.gd" id="6_vm"]
+[ext_resource type="Script" path="res://scripts/world/mission_controller.gd" id="7_mc"]
+[ext_resource type="Script" path="res://scripts/world/npc_manager.gd" id="8_npc_mgr"]
+[ext_resource type="Script" path="res://scripts/world/police_manager.gd" id="9_police_mgr"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_unit"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="BoxShape3D" id="Shape_0"]
+size = Vector3(120, 1, 120)
+
+[sub_resource type="BoxShape3D" id="Shape_1"]
+size = Vector3(16, 10, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_2"]
+size = Vector3(16, 14, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_3"]
+size = Vector3(16, 8, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_4"]
+size = Vector3(16, 12, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_5"]
+size = Vector3(14, 9, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_6"]
+size = Vector3(14, 11, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_7"]
+size = Vector3(14, 7, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_8"]
+size = Vector3(14, 10, 12)
+
+[sub_resource type="BoxShape3D" id="Shape_9"]
+size = Vector3(16, 8, 10)
+
+[sub_resource type="BoxShape3D" id="Shape_10"]
+size = Vector3(16, 9, 10)
+
+[sub_resource type="BoxShape3D" id="Shape_11"]
+size = Vector3(14, 6, 10)
+
+[sub_resource type="BoxShape3D" id="Shape_12"]
+size = Vector3(14, 8, 10)
+
+[sub_resource type="BoxShape3D" id="Shape_13"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="StandardMaterial3D" id="Mat_ground"]
+albedo_color = Color(0.42, 0.44, 0.46, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_road"]
+albedo_color = Color(0.23, 0.24, 0.26, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_A"]
+albedo_color = Color(0.54, 0.5, 0.44, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_B"]
+albedo_color = Color(0.48, 0.53, 0.58, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_C"]
+albedo_color = Color(0.58, 0.48, 0.42, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_crate"]
+albedo_color = Color(0.61, 0.54, 0.35, 1)
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat"]
+sky_top_color = Color(0.25, 0.45, 0.7, 1)
+sky_horizon_color = Color(0.75, 0.85, 0.95, 1)
+ground_bottom_color = Color(0.2, 0.2, 0.22, 1)
+ground_horizon_color = Color(0.6, 0.65, 0.7, 1)
+
+[sub_resource type="Sky" id="Sky"]
+sky_material = SubResource("SkyMat")
+
+[sub_resource type="Environment" id="Env"]
+background_mode = 2
+sky = SubResource("Sky")
+ambient_light_source = 2
+ambient_light_color = Color(0.7, 0.75, 0.8, 1)
+ambient_light_energy = 0.6
+
+[node name="WorldRoot" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.9, -0.5, 0)
+light_energy = 1.0
+shadow_enabled = false
+
+[node name="Static" type="StaticBody3D" parent="."]
+
+[node name="Ground" type="Node3D" parent="Static"]
+transform = Transform3D(120, 0, 0, 0, 1, 0, 0, 0, 120, 0, -0.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/Ground"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_ground")
+
+[node name="GroundCol" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("Shape_0")
+
+[node name="B1" type="Node3D" parent="Static"]
+transform = Transform3D(16, 0, 0, 0, 10, 0, 0, 0, 12, -20, 5.0, -20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B1"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_A")
+
+[node name="B1Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 5.0, -20)
+shape = SubResource("Shape_1")
+
+[node name="B2" type="Node3D" parent="Static"]
+transform = Transform3D(16, 0, 0, 0, 14, 0, 0, 0, 12, 20, 7.0, -20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B2"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_B")
+
+[node name="B2Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 7.0, -20)
+shape = SubResource("Shape_2")
+
+[node name="B3" type="Node3D" parent="Static"]
+transform = Transform3D(16, 0, 0, 0, 8, 0, 0, 0, 12, -20, 4.0, 20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B3"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_C")
+
+[node name="B3Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4.0, 20)
+shape = SubResource("Shape_3")
+
+[node name="B4" type="Node3D" parent="Static"]
+transform = Transform3D(16, 0, 0, 0, 12, 0, 0, 0, 12, 20, 6.0, 20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B4"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_A")
+
+[node name="B4Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 6.0, 20)
+shape = SubResource("Shape_4")
+
+[node name="B5" type="Node3D" parent="Static"]
+transform = Transform3D(14, 0, 0, 0, 9, 0, 0, 0, 12, -45, 4.5, -20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B5"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_B")
+
+[node name="B5Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 4.5, -20)
+shape = SubResource("Shape_5")
+
+[node name="B6" type="Node3D" parent="Static"]
+transform = Transform3D(14, 0, 0, 0, 11, 0, 0, 0, 12, 45, 5.5, -20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B6"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_C")
+
+[node name="B6Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 5.5, -20)
+shape = SubResource("Shape_6")
+
+[node name="B7" type="Node3D" parent="Static"]
+transform = Transform3D(14, 0, 0, 0, 7, 0, 0, 0, 12, -45, 3.5, 20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B7"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_A")
+
+[node name="B7Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 3.5, 20)
+shape = SubResource("Shape_7")
+
+[node name="B8" type="Node3D" parent="Static"]
+transform = Transform3D(14, 0, 0, 0, 10, 0, 0, 0, 12, 45, 5.0, 20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B8"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_B")
+
+[node name="B8Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 5.0, 20)
+shape = SubResource("Shape_8")
+
+[node name="B9" type="Node3D" parent="Static"]
+transform = Transform3D(16, 0, 0, 0, 8, 0, 0, 0, 10, -20, 4.0, -45)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B9"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_C")
+
+[node name="B9Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 4.0, -45)
+shape = SubResource("Shape_9")
+
+[node name="B10" type="Node3D" parent="Static"]
+transform = Transform3D(16, 0, 0, 0, 9, 0, 0, 0, 10, 20, 4.5, -45)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B10"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_A")
+
+[node name="B10Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 4.5, -45)
+shape = SubResource("Shape_10")
+
+[node name="B11" type="Node3D" parent="Static"]
+transform = Transform3D(14, 0, 0, 0, 6, 0, 0, 0, 10, -45, 3.0, -45)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B11"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_B")
+
+[node name="B11Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45, 3.0, -45)
+shape = SubResource("Shape_11")
+
+[node name="B12" type="Node3D" parent="Static"]
+transform = Transform3D(14, 0, 0, 0, 8, 0, 0, 0, 10, 45, 4.0, -45)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/B12"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_C")
+
+[node name="B12Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 4.0, -45)
+shape = SubResource("Shape_12")
+
+[node name="C1" type="Node3D" parent="Static"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -10, 1.0, 10)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/C1"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_crate")
+
+[node name="C1Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.0, 10)
+shape = SubResource("Shape_13")
+
+[node name="C2" type="Node3D" parent="Static"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 10, 1.0, -10)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/C2"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_crate")
+
+[node name="C2Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.0, -10)
+shape = SubResource("Shape_13")
+
+[node name="C3" type="Node3D" parent="Static"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, -10, 1.0, -10)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/C3"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_crate")
+
+[node name="C3Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 1.0, -10)
+shape = SubResource("Shape_13")
+
+[node name="C4" type="Node3D" parent="Static"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 10, 1.0, 10)
+
+[node name="Mesh" type="MeshInstance3D" parent="Static/C4"]
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_crate")
+
+[node name="C4Col" type="CollisionShape3D" parent="Static"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.0, 10)
+shape = SubResource("Shape_13")
+
+[node name="RoadMain" type="MeshInstance3D" parent="."]
+transform = Transform3D(12, 0, 0, 0, 0.1, 0, 0, 0, 120, 0, 0.05, 0)
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_road")
+
+[node name="RoadCross" type="MeshInstance3D" parent="."]
+transform = Transform3D(120, 0, 0, 0, 0.1, 0, 0, 0, 12, 0, 0.05, 0)
+mesh = SubResource("BoxMesh_unit")
+surface_material_override/0 = SubResource("Mat_road")
+
+[node name="District" type="Node3D" parent="."]
+
+[node name="SpawnPoints" type="Node3D" parent="District"]
+
+[node name="PlayerSpawn" type="Marker3D" parent="District/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
+
+[node name="Dynamic" type="Node3D" parent="."]
+
+[node name="Player" parent="Dynamic" instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8)
+
+[node name="Car" parent="Dynamic" instance=ExtResource("5_car")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 16)
+
+[node name="VehicleManager" type="Node" parent="."]
+script = ExtResource("6_vm")
+
+[node name="MissionController" type="Node3D" parent="."]
+script = ExtResource("7_mc")
+
+[node name="NPCManager" type="Node3D" parent="."]
+script = ExtResource("8_npc_mgr")
+
+[node name="PoliceManager" type="Node3D" parent="."]
+script = ExtResource("9_police_mgr")
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("4_pause")]
+visible = false

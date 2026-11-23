@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/mission_briefing.gd" id="1_briefing"]
+[ext_resource type="Theme" path="res://themes/ui_theme.tres" id="99_theme"]
+
+[node name="MissionBriefing" type="CanvasLayer"]
+process_mode = 3
+layer = 5
+script = ExtResource("1_briefing")
+
+[node name="BriefingPanel" type="PanelContainer" parent="."]
+theme = ExtResource("99_theme")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -220.0
+offset_right = 320.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="BriefingPanel"]
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="BriefingPanel/VBox"]
+theme_override_font_sizes/font_size = 28
+text = "Mission"
+
+[node name="DescLabel" type="Label" parent="BriefingPanel/VBox"]
+autowrap_mode = 2
+text = "A mission."
+
+[node name="ObjectivesList" type="VBoxContainer" parent="BriefingPanel/VBox"]
+theme_override_constants/separation = 4
+
+[node name="RewardLabel" type="Label" parent="BriefingPanel/VBox"]
+text = "Reward: —"
+
+[node name="StartLabel" type="Label" parent="BriefingPanel/VBox"]
+text = "Start: —"
+
+[node name="Buttons" type="HBoxContainer" parent="BriefingPanel/VBox"]
+theme_override_constants/separation = 10
+
+[node name="AcceptButton" type="Button" parent="BriefingPanel/VBox/Buttons"]
+layout_mode = 2
+text = "Accept"
+
+[node name="DeclineButton" type="Button" parent="BriefingPanel/VBox/Buttons"]
+layout_mode = 2
+text = "Decline"
