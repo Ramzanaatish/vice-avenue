@@ -1,5 +1,187 @@
 # Vice Avenue — Changelog
 
+## v1.1.2: Boot fix (phone-reported) — 23 November 2026
+- **Bug (reported from the phone, v1.1.1)**: the game stranded on
+  the boot screen — green bar full, "v1.1.1" shown, main menu
+  never appeared. **Root cause**: AppRoot's scene gate used
+  `FileAccess.file_exists()` on a `res://` `.tscn` path. In an
+  exported build scenes are compiled to `.scn` + `.remap`, so the
+  literal `.tscn` is not in the PCK and the check returns FALSE;
+  headless it returns TRUE (the `.tscn` files exist on disk), so
+  every headless run passed and the bug shipped. It was present
+  since Gate 1 — the Gate 1 "first run" only ever showed the boot
+  screen. Reproduced before fixing by running the exported PCK
+  headless: log showed "AppRoot: scene not built yet:
+  res://scenes/frontend/main_menu.tscn".
+- **Fix**: scene-existence checks now use `ResourceLoader.exists()`
+  (resolves remaps) in `scripts/core/app_root.gd`,
+  `scripts/ui/main_menu.gd` (world + credits scenes) and
+  `scripts/ui/save_slots.gd` (world scene). Data `.json` checks
+  are untouched — `.json` files ship as plain files in the APK,
+  so `FileAccess` works for them. `FileAccess` stays correct for
+  `user://` save files.
+- **Regression guards**: new `tests/test_boot_fix.gd` (21 checks:
+  all 11 switchable scenes exist via `ResourceLoader`, no
+  `FileAccess` scene gate left in the three switching files,
+  version 1.1.2 / code 4) and `step8/check_pck_boot.sh` — exports
+  a PCK and runs the game from it, failing if the boot gate ever
+  rejects a scene again. The PCK run is the only gate that can
+  catch this bug class; the headless suite alone cannot.
+- **Version**: 1.1.2 / code 4, save schema stays 2 — no migration,
+  old saves still load. Content version 4.
+- **Verified**: all 8 headless tests PASS (18 scenes, zero script
+  errors); PCK boot check PASS (boot advances to main menu in the
+  exported build); export-check APK 29,422,742 B, v1.1.2 / code 4,
+  apksigner OK, minSdk 24, targetSdk 36, zero permissions.
+
+## Step 8: Review / release (Phase 16 + 17, headless part) — 23 November 2026
+- **Phase 16 — update and version system** (`data/version_manifest.json`
+  + `scripts/autoload/version_manager.gd`): the manifest carries
+  package_id, version_name 1.1.1, version_code 3, save_schema 2,
+  content_version 3, min_supported_version_code 1, channel "dev",
+  release_date 2026-11-23. New pure functions, all headless-tested:
+  `load_manifest()` (never crashes, `{}` on failure),
+  `validate_manifest()` (checks every field against the constants
+  and the version table's latest row), `check_update(candidate)`
+  (update_available / required when the installed code is below
+  the candidate's min_supported), `is_save_compatible(schema)`
+  (schemas 1–2 true, 0 and 3+ false), `get_update_summary()`.
+  `check()` is unchanged. No network call, no account, no store
+  upload — the game stays offline-first; the manifest is a local
+  file the launcher reads, and the update decision is a pure
+  function over it.
+- **New test** `tests/test_step8.gd` + `tests/test_step8.tscn` —
+  **52 checks**: manifest loads/validates, validate rejects bad
+  manifests (wrong code/package/schema/min), check_update cases
+  (same/newer/required/older/empty), save compatibility, summary,
+  version table strictly increasing + latest row, export-preset
+  consistency, and the Step 7 police scene-cache regression guard
+  (officer scene load appears exactly twice: ready + guarded
+  fallback).
+- **Version**: stays 1.1.1 / code 3 — the update/version system
+  does not require a bump. Save schema stays 2, no migration.
+- **Android compatibility review** (documented facts, no phone
+  yet): package com.devflowia.viceavenue; minSdk 24, targetSdk 36,
+  compileSdk 36 (build-tools 36.1.0, NDK 29.0.14206865, Gradle
+  8.11.1); arm64-v8a only; **no permissions at all** in the
+  manifest (offline game — no INTERNET, no storage, no location);
+  label "Vice Avenue". Play policy basics: new apps need Play App
+  Signing (upload key kept off Git, two backups), a privacy
+  policy + data-safety declaration (no data collected), the
+  content rating questionnaire, and closed testing with 12+
+  testers for 14 days before production for new personal
+  accounts. A formal trademark registry check (USPTO / Pakistan
+  IPO) is still outstanding before any Play listing.
+- **Name check (research only, 23 Nov)**: no game or app actually
+  titled "Vice Avenue" was found. "Vice Avenue" is a street name
+  inside GTA games (GTA Wiki: Vice City 3D Universe list; GTA 6
+  has South/North Vice Avenue in Leonida), and a 2021 song
+  ("Vice Avenue", Ty in the Building ft. Sada Baby & BabyTron).
+  **"Vice Avenue Games" is an existing Play developer**
+  (packages `com.ViceAvenueGames.*`: Cafe Simulator 3D,
+  TimberQuest/Lumber Quest, Quarantine Simulator) — a
+  search-confusion risk, different package, no technical clash.
+  Nothing filed, nobody contacted.
+- **Export preset fix (real bug found headless)**: the
+  hand-written `export_presets.cfg` used Godot 3-style slash
+  keys (`gradle/build/*`, `launcher/icon/*`,
+  `variant/architecture/*`) that Godot 4.7 **silently ignores**.
+  Verified against the Godot 4.7.2 source, the correct names
+  are `gradle_build/use_gradle_build`,
+  `gradle_build/export_format` (0 = APK, 1 = AAB),
+  `gradle_build/min_sdk` / `gradle_build/target_sdk` (STRING
+  type in 4.7 — must be quoted `"24"` / `"36"`),
+  `launcher_icons/main_192x192` (+ adaptive foreground /
+  background), `architectures/arm64-v8a`. The whole file was
+  rewritten with correct names for BOTH presets (preset.0
+  behaviour-preserving: its old values equalled defaults
+  except icons, which resolve to the same files);
+  `screen/opaque` was removed (not a 4.7 option). New preset
+  "Android (Release AAB)": export_format 1, path
+  `builds/android/ViceAvenue-release.aab`, Gradle build on,
+  version 1.1.1 / code 3, keystore fields intentionally EMPTY
+  in the file — signing via env vars at export time
+  (`GODOT_ANDROID_KEYSTORE_RELEASE_PATH/USER/PASSWORD`).
+  First verbose export after the fix printed
+  `- export format: 1` (was 0 before).
+- **AAB signing test — PARTIAL, blocked by the VM, worked
+  around**: Godot's AAB export runs Gradle, and Gradle's
+  daemon talks to its launcher over loopback TCP. On this VM
+  that TCP is intercepted by the sandbox (proven: a Java
+  loopback test got the runtime's "Other TCP connections is
+  turned off" message instead of its own server's reply), so
+  every daemon build fails with "Could not receive a message
+  from the daemon" even though the daemon starts, listens on
+  127.0.0.1 and stays alive. `org.gradle.daemon=false` /
+  `--no-daemon` do NOT avoid it — Gradle 8.11 forks a
+  single-use daemon (still over TCP) either way. The fix is a
+  host setting, not a project change: Muse Settings →
+  Permissions → Direct network protocols → switch `other_tcp`
+  from Deny to Ask (or run the Gradle build where loopback
+  TCP is allowed). Until then, the AAB was produced the
+  honest way instead of faked: the Godot Debug APK
+  (v1.1.1/code 3) was converted with aapt2 36.1.0
+  (`aapt2 convert --output-format proto`) and repackaged
+  with Google bundletool 1.18.1 (`build-bundle` from a
+  base module: manifest + resources.pb + res + 13 dex +
+  lib/arm64-v8a + 187 assets + kotlin/root files), then
+  signed with jarsigner using the **debug keystore — TEST
+  SIGNING ONLY, never the Play upload key** (a real upload
+  key must be created with keytool before any Play upload).
+  Verified: `jarsigner -verify` → "jar verified.";
+  `bundletool build-apks --mode=universal` exit 0 and the
+  generated universal APK badges
+  com.devflowia.viceavenue v1.1.1/code 3, minSdk 24,
+  targetSdk 36, "Vice Avenue". AAB
+  `step8/ViceAvenue-v1.1.1-release-signed-TEST.aab`,
+  29,323,738 bytes (unsigned twin alongside). Godot's own
+  Gradle AAB path is NOT yet proven on this VM — it stays
+  open until a build runs where loopback TCP is allowed.
+  One real Godot quirk found on the way: the APK's resource
+  table references `res/mipmap-anydpi-v26/themed_icon.xml`
+  but the file is not packaged, so `aapt2 convert` fails
+  until a copy of `icon.xml` is added at that path (themed
+  icon then renders as the regular icon in the test AAB
+  only; the debug APK installs fine as-is).
+- **VM environment fixes (documented in step8/notes.md)**:
+  Android SDK completed on this VM (cmdline-tools 11076708,
+  platform android-36_r02, build-tools 36.1.0, NDK
+  29.0.14206865, licenses written by hand — curl works
+  through the proxy, Java `HttpURLConnection` proxy
+  tunnelling is broken on this VM); export templates
+  completed (`android_source.zip` extracted from the
+  `.tpz`); Gradle 8.11.1 pre-populated in the wrapper dists
+  (correct hash dir is the MD5 of the URL as a positive
+  BigInteger in base-36:
+  `bpt9gzteqjrbo1mjrsomdt32c`, plus the `<zip>.ok` marker);
+  **Java's `user.home` is `/root`, not `$HOME`** — the
+  wrapper looks in `/root/.gradle` unless `GRADLE_USER_HOME`
+  is set (set it to `/home/hatch/.gradle` for every Gradle
+  run here). `android/build/gradle.properties`: daemon
+  heap lowered 4536m → 1536m and `org.gradle.daemon=false`
+  added (documented in the file; safe to revert on a machine
+  where the daemon works).
+- **VERIFIED** — headless, Godot 4.7.2: **all 7 test scenes
+  PASS, zero script errors** — test_all_scenes (18 scenes),
+  test_slice_a, test_slice_b, test_slice_c, test_save_manager,
+  test_step7 (67 checks), **test_step8 (52 checks)**.
+- **Export checks** (build checks only, NOT user
+  deliverables): Android Debug APK re-exported after the
+  preset rewrite — exit 0, 29,418,270 bytes, format 0,
+  package com.devflowia.viceavenue v1.1.1/code 3, aapt2
+  badging confirmed; signed TEST AAB as above.
+- **Phase 17 (headless) go/no-go**: NO-GO for Phase 18 —
+  everything verifiable headless passes, but the Gate 0.7
+  pass bar is **30 FPS stable on the baseline device**, which
+  is still unmeasured (needs the real phone). Full checklist
+  in `step8/notes.md`.
+- Docs: `documentation/feature_status.md` (Phases 16/17 →
+  Verified headless), `documentation/performance.md` (Step 8
+  headless facts + Android compatibility + pending phone
+  list), `documentation/update_release_process.md` (version
+  table: 1.1.0/code 2/schema 2 and 1.1.1/code 3/schema 2),
+  this changelog, README (Step 8 section + phone test list).
+
 ## Step 7: Polish (v1.1.1 / code 3) — 23 November 2026
 - **Phase 14 — UI polish**: one neon-night theme (`themes/ui_theme.tres`,
   dark navy panels, cyan accent, Button font 18, ~47 px min height)

@@ -1,9 +1,72 @@
-# Vice Avenue — Step 7: Polish (v1.1.1)
+# Vice Avenue — v1.1.2 boot fix (Step 8 + phone-reported fix)
 
 Original offline single-player 3D open-world crime/adventure game
 for Android. Built step by step from the Ready to Build v4.0 blueprint.
 Engine: Godot 4.7.x (pin one exact patch, e.g. 4.7.2). Language: GDScript.
 3D tools: Blender. Mode: offline single player.
+
+## What v1.1.2 fixes (on top of Step 8)
+
+- **Boot fix (phone-reported)**: v1.1.1 stranded on the boot screen
+  on a real phone — bar full, menu never appeared. Cause:
+  `FileAccess.file_exists()` on a `res://` `.tscn` path returns
+  FALSE in an exported build (scenes compile to `.scn` + `.remap`).
+  Scene gates now use `ResourceLoader.exists()`. New regression
+  test `tests/test_boot_fix.gd` + PCK boot gate
+  `step8/check_pck_boot.sh` (the only check that can catch this
+  bug class — the headless suite cannot). Version 1.1.2 / code 4,
+  save schema stays 2 — no migration.
+
+## What Step 8 adds (on top of Step 7)
+
+- **Update and version system (Phase 16)**: a version manifest
+  (`data/version_manifest.json`, v1.1.2 / code 4, save schema 2)
+  plus a check flow in `VersionManager` — the game can tell
+  whether an update is available or required and whether a save
+  is compatible, all from a local file. Still fully offline: no
+  network call, no account, no store. New self-test
+  `tests/test_step8.gd` (52 checks). Version was 1.1.1 / code 3 at
+  Step 8; now 1.1.2 / code 4 after the boot fix — save schema
+  stays 2, no migration, old saves still load.
+- **Release preset**: a second Android export preset, "Android
+  (Release AAB)", alongside "Android Debug". The preset file was
+  also fixed — it used old Godot 3-style option names that Godot
+  4.7 silently ignores, so the AAB preset was really exporting an
+  APK. It now really asks for format AAB.
+- **AAB signing test (partial)**: a signed release AAB was built
+  and verified (`jarsigner -verify` OK, and bundletool turns it
+  back into a working universal APK with the right package,
+  version and SDK levels). It was built from the Godot APK with
+  Google's bundletool because Godot's own Gradle build cannot
+  run on the dev VM right now — the VM blocks the loopback
+  network Gradle's build daemon needs (see `step8/notes.md` for
+  the exact setting). The AAB is signed with the **debug key
+  for testing only**; a real Play upload key still has to be
+  created before any Play upload. Nothing was uploaded anywhere.
+- **Name check**: no game or app called "Vice Avenue" exists,
+  but "Vice Avenue Games" is already a Play developer (different
+  apps, same words) — a possible search-confusion risk, and a
+  formal trademark check is still needed before a Play listing.
+- **Android compatibility**: minSdk 24, targetSdk 36, arm64-v8a
+  only, **no permissions at all** (the game is offline and asks
+  for nothing).
+- **Phase 17 (headless) go/no-go: NO-GO for the full city yet.**
+  Everything checkable without a phone passes (all 7 test scenes,
+  zero script errors, APK + AAB checks), but the pass bar is
+  **30 FPS stable on the baseline phone** — and that number only
+  exists once the game runs on a real phone. The full checklist
+  is in `step8/notes.md`.
+- **How to test on the phone**: push the Step 7 ZIP, let Actions
+  build the APK, install over the Gate 1 build. (1) Play 10
+  minutes in Old Quarter — walking, driving the car, 2 police
+  chasing you — and report the FPS (turn on Show FPS in
+  Settings first). (2) Check the game never stutters or gets hot.
+  (3) Kill the app and reopen it — check your save and settings
+  are still there. (4) Do the Step 7 list again (settings,
+  sounds, bob/lean, police beacons, Mission 04 jingle, credits).
+  (5) Report the phone model + Android version with the FPS, so
+  the 30 FPS bar can be judged. The AAB is NOT for the phone —
+  it is only the Play release format; keep installing the APK.
 
 ## What Step 7 adds (on top of Step 6)
 
@@ -215,11 +278,15 @@ Engine: Godot 4.7.x (pin one exact patch, e.g. 4.7.2). Language: GDScript.
 
 ## Next steps (in blueprint order)
 
+- Step 8 (Phase 16 + 17 headless): DONE 23 Nov 2026 — version
+  manifest + update check (52 checks), AAB preset fixed, signed
+  TEST AAB verified via bundletool, name check done, Android
+  compatibility reviewed. **Go/no-go for Phase 18: NO-GO until
+  the real phone reports 30 FPS stable** (see `step8/notes.md`).
+- Phase 18 (full city + Play release): starts only after the
+  Phase 17 go — needs the phone FPS number, a real upload key
+  (keytool, never the debug keystore), and the formal trademark
+  check before any Play listing.
 - Gate 0.1: RESOLVED 21 Nov 2026 — title **Vice Avenue**,
   package `com.devflowia.viceavenue` (was the "VICE WORLD"
   working title; 12 "Vice" names checked, 21 searches).
-- Android Gate 1: export templates + Debug APK + first
-  real-device run of Slice A/B (needs Android SDK on your PC).
-- Step 6 (Slice C, Phase 10–12): NPCs, dialogue, combat
-  basics, the S08 map, S15 game over, and the full
-  save/load restore on Continue.

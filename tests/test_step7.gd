@@ -213,14 +213,14 @@ func _check_theme() -> void:
 	button.queue_free()
 
 func _check_version() -> void:
-	_expect(VersionManager.GAME_VERSION == "1.1.1", "version is 1.1.1")
-	_expect(VersionManager.VERSION_CODE == 3, "version code is 3")
+	_expect(VersionManager.GAME_VERSION == "1.1.2", "version is 1.1.2")
+	_expect(VersionManager.VERSION_CODE == 4, "version code is 4")
 	_expect(VersionManager.SAVE_SCHEMA_VERSION == 2, "save schema stays 2")
 	var found_row := false
 	for row in VersionManager.VERSION_TABLE:
-		if str(row.get("version_name", "")) == "1.1.1" and int(row.get("version_code", 0)) == 3 and int(row.get("save_schema", 0)) == 2:
+		if str(row.get("version_name", "")) == "1.1.2" and int(row.get("version_code", 0)) == 4 and int(row.get("save_schema", 0)) == 2:
 			found_row = true
-	_expect(found_row, "version table has 1.1.1 / code 3 / schema 2")
+	_expect(found_row, "version table has 1.1.2 / code 4 / schema 2")
 
 func _check_layout_sizes() -> void:
 	_expect(_map.get_node("CloseButton").size.y >= 48.0, "map Close button >= 48 px tall")

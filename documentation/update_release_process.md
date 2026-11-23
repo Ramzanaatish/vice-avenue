@@ -57,3 +57,6 @@ uninstall, no reinstall, no lost progress.
 | Version name | Version code | Save schema | Notes |
 |---|---|---|---|
 | 1.0.0 | 1 | 1 | First release (skeleton) |
+| 1.1.0 | 2 | 2 | Step 6 Slice C "Alive" (NPCs, dialogue, combat, police, map, game over) |
+| 1.1.1 | 3 | 2 | Step 7 polish + Step 8 review/release (Phase 16/17 headless); no save migration |
+| 1.1.2 | 4 | 2 | Boot fix: scene gates use ResourceLoader.exists (FileAccess.file_exists returns false for remapped .tscn in export); PCK boot gate added; no save migration |

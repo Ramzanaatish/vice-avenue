@@ -22,7 +22,14 @@ func _ready() -> void:
 	_show_scene(BOOT_SCENE)
 
 func _on_scene_change_requested(scene_path: String) -> void:
-	if not FileAccess.file_exists(scene_path):
+	# v1.1.2 boot fix: the FileAccess existence check returns FALSE
+	# for res:// .tscn paths in an exported build (scenes are
+	# compiled to .scn + .remap, so the literal .tscn is not in the
+	# PCK). ResourceLoader.exists() resolves the remap correctly.
+	# This gate stranded the game on the boot screen on real phones
+	# (bar full, v1.1.1, menu never appeared) while headless
+	# runs passed because the .tscn files exist on disk there.
+	if not ResourceLoader.exists(scene_path, "PackedScene"):
 		print("AppRoot: scene not built yet: ", scene_path, " — staying on current scene.")
 		return
 	_show_scene(scene_path)

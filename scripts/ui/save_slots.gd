@@ -64,7 +64,10 @@ func _on_load_pressed(slot_id: int) -> void:
 		_enter_world(slot_id, true)
 
 func _enter_world(slot_id: int, is_new: bool) -> void:
-	if not FileAccess.file_exists(WORLD_SCENE):
+	# v1.1.2: ResourceLoader.exists, not the FileAccess existence
+	# check — the .tscn is remapped in an exported build (see
+	# app_root.gd).
+	if not ResourceLoader.exists(WORLD_SCENE, "PackedScene"):
 		if is_new:
 			$StatusLabel.text = "New game saved to Slot %d. " % slot_id
 		else:

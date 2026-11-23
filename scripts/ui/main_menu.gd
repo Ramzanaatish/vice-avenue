@@ -52,7 +52,10 @@ func _on_continue_pressed() -> void:
 	if not bool(loaded.get("ok", false)):
 		$SaveSummary.text = "Load failed: " + str(loaded.get("error", "?"))
 		return
-	if not FileAccess.file_exists(WORLD_SCENE):
+	# v1.1.2: ResourceLoader.exists, not the FileAccess existence
+	# check — the .tscn is remapped in an exported build (see
+	# app_root.gd).
+	if not ResourceLoader.exists(WORLD_SCENE, "PackedScene"):
 		$SaveSummary.text = "Save loaded OK (Slot %d). World scene arrives in Slice A (Step 4)." % _latest_slot
 		return
 	GameManager.continue_game(_latest_slot)
@@ -67,7 +70,10 @@ func _on_settings_pressed() -> void:
 
 func _on_credits_pressed() -> void:
 	UiFeedback.press($Center/MenuBox/CreditsButton)
-	if not FileAccess.file_exists(CREDITS_SCENE):
+	# v1.1.2: ResourceLoader.exists, not the FileAccess existence
+	# check — the .tscn is remapped in an exported build (see
+	# app_root.gd).
+	if not ResourceLoader.exists(CREDITS_SCENE, "PackedScene"):
 		$SaveSummary.text = "Credits scene is not built yet (later step)."
 		return
 	GameManager.request_scene(CREDITS_SCENE)

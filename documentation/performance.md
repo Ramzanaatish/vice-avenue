@@ -8,6 +8,70 @@ draw-call, triangle, or on-device memory numbers**. Those come from
 real-device profiling only (blueprint O-03) — inventing them here
 would be worse than leaving them blank.
 
+## Measured headless (Step 8, 23 November 2026)
+- Full test suite, **7 test scenes, all PASS, zero script errors**:
+  `test_all_scenes` (18 scenes load + instantiate), `test_save_manager`,
+  `test_slice_a`, `test_slice_b`, `test_slice_c`, `test_step7`
+  (67 checks), `test_step8` (52 checks: manifest, update check,
+  save compatibility, version table, export-preset consistency,
+  police scene-cache regression guard).
+- Version system: `data/version_manifest.json` (1.1.1 / code 3,
+  save schema 2, content version 3, min supported code 1).
+  Version was 1.1.1 / code 3 at Step 8, save schema stays 2 — no
+  migration, no bump needed for that step.
+- **v1.1.2 boot fix (phone-reported, 23 November 2026)**: v1.1.1
+  stranded on the boot screen on a real phone (bar full, menu
+  never appeared). Cause: `FileAccess.file_exists()` on a
+  `res://` `.tscn` path returns FALSE in an exported build
+  (scenes compile to `.scn` + `.remap`); headless it returns
+  TRUE, so the suite passed and the bug shipped — present since
+  Gate 1. Fixed with `ResourceLoader.exists()` in app_root,
+  main_menu (x2) and save_slots; new `tests/test_boot_fix.gd`
+  (21 checks) + `step8/check_pck_boot.sh` (PCK boot gate — the
+  only check that can catch this bug class). Version 1.1.2 /
+  code 4, save schema stays 2, content version 4. Export check:
+  Android Debug APK 29,422,742 bytes (v1.1.2 / code 4),
+  apksigner verify OK, minSdk 24, targetSdk 36, zero
+  permissions. Full suite now 8 tests, all PASS, zero script
+  errors; PCK boot check PASS.
+- Export checks: Android Debug APK re-exported after the preset
+  rewrite — exit 0, 29,418,270 bytes, export format 0, package
+  com.devflowia.viceavenue v1.1.1/code 3, aapt2 badging
+  confirmed (minSdk 24, targetSdk 36, "Vice Avenue"). Signed
+  TEST AAB 29,323,738 bytes: `jarsigner -verify` → "jar
+  verified."; `bundletool build-apks --mode=universal` exit 0,
+  generated universal APK badges the same package/version/SDKs.
+  AAB built from the Godot APK via aapt2 + bundletool 1.18.1
+  (see notes — Godot's own Gradle AAB path is blocked on this
+  VM by the sandbox's loopback-TCP denial, not by the game).
+- Android compatibility (documented facts): minSdk 24,
+  targetSdk 36, compileSdk 36, build-tools 36.1.0, NDK
+  29.0.14206865, Gradle 8.11.1, arm64-v8a only, **zero
+  permissions in the manifest** (no INTERNET, storage, or
+  location — the game is offline). Play basics noted: Play App
+  Signing required, upload key must be created fresh (never
+  the debug keystore), privacy policy + data-safety declaration
+  needed (no data collected), closed testing 12+ testers / 14
+  days for new personal accounts.
+- Name check (research only): no game/app titled "Vice Avenue"
+  found; "Vice Avenue Games" is an existing Play developer
+  (search-confusion risk, different package). Formal trademark
+  registry check still outstanding.
+- **Bug found headless and fixed (Step 8)**: `export_presets.cfg`
+  used Godot 3-style slash keys (`gradle/build/*`,
+  `launcher/icon/*`, `variant/architecture/*`) that Godot 4.7
+  silently ignores — the "Release AAB" preset was really
+  exporting format 0 (APK). Whole file rewritten with the
+  correct 4.7 names (verified against the 4.7.2 source);
+  first verbose export after the fix printed
+  `- export format: 1`.
+- **Quirk found (Step 8, Godot)**: the APK's resource table
+  references `res/mipmap-anydpi-v26/themed_icon.xml` but the
+  file is not packaged, so `aapt2 convert` fails until a copy
+  of `icon.xml` is added at that path. The debug APK installs
+  fine as-is; the themed icon only renders as the regular icon
+  in the test AAB.
+
 ## Measured headless (Step 7, 23 November 2026)
 - Full test suite, **6 test scenes, all PASS, zero script errors**:
   `test_all_scenes` (18 scenes load + instantiate, incl. new

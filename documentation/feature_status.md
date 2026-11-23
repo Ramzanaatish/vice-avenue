@@ -19,8 +19,8 @@
 | Vertical Slice A/B/C | Verified | 13 | Slice A + B + C tests PASS headless; Gate 1 APK installed on the phone; Step 7 export check OK (build check only) |
 | UI/map/settings polish | Verified | 14 | Step 7 test PASS (67 checks): neon theme, 48 px touch targets, settings persist/apply, pause return-to-world, save blocked while wanted |
 | Audio + animation polish | Verified | 15 | Step 7 test PASS: 6 synthesized SFX wired + mute, walk bob/lean, attack lunge, hit flash, camera shake, police beacons; no music yet |
-| Update + version system | Testing | 16 | VersionManager + migration |
-| Slice review (go/no-go) | Testing | 17 | Headless part done (Step 7: load times, node counts, zero script errors, export check); real-phone profiling still pending |
-| Full city + Play release | Planned | 18 | — |
+| Update + version system | Verified (headless) | 16 | Step 8 test PASS (52 checks): manifest load/validate, update check, save compat, version table; offline, no network call |
+| Slice review (go/no-go) | Verified (headless) | 17 | Headless part done (Step 8: all 7 tests PASS, zero script errors, APK + AAB checks, name check, compat review); **NO-GO for Phase 18 until real-phone FPS arrives (Gate 0.7 bar: 30 FPS stable)** |
+| Full city + Play release | Planned | 18 | Gated on Phase 17 go (phone FPS) + real upload key + trademark check |
 
 Status values: Planned / In Progress / Testing / Verified.
